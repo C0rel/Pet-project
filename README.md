@@ -13,7 +13,7 @@
 
 ```bash
 # Клонировать репозиторий
-git clone https://github.com/ТВОЙ_НИК/guees_the_number.git
+git clone https://github.com/C0rel/Pet-project.git
 
 # Перейти в папку проекта
 cd guees_the_number
