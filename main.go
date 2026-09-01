@@ -58,13 +58,13 @@ func pastAttempts(slInputValue []int, inputValue int) []int {
 }
 func hints(randNum int, userValue int) {
     diff := int64(math.Abs(float64(randNum - userValue)))
-    if diff >= 15 {
-        color.Blue("Холодно")
-    } else if diff >= 5 {
-        color.Yellow("Тепло")
-    } else {
-        color.Red("Горячо")
-    }
+   	if diff <= 5 {
+    	color.Red("Горячо")
+	} else if diff <= 15 {
+    	color.Yellow("Тепло")
+	} else {
+    	color.Blue("Холодно")
+	}
 }
 	func choosingTheDifficulty()(int,int){
 	reader := bufio.NewReader(os.Stdin)
@@ -99,44 +99,59 @@ func hints(randNum int, userValue int) {
 		fmt.Print("\033[H\033[2J")
 		return 0,0
 	}
-	func guessGame(randNum int,numAttepts int) (string,int){
-	var outcome string
-	var attempts int
-	var allAttempts []int
-	for i:=0;i<numAttepts;i++{
-		fmt.Println("Введите число:")
-		reader := bufio.NewReader(os.Stdin)
-		var userValue int
-		var err error
-		for{
-			input, _ := reader.ReadString('\n')
-			input = strings.TrimSpace(input)
-			userValue, err = strconv.Atoi(input)
-			allAttempts = pastAttempts(allAttempts, userValue)
-			if err==nil{break}
-			fmt.Println("Введите корректное значение")	
-		}
-		attempts++
-		if userValue>randNum{
-			hints(randNum,userValue)
-			color.Yellow("Секретное число меньше")
-		}else if userValue<randNum{
-			hints(randNum,userValue)
-			color.Yellow("Секретное число больше")
-		}else{
-			outcome="Победа"
-			color.Green(outcome)
-			fmt.Printf("Попыток %d\n",attempts)
-			saveResult(outcome,attempts)
-			return outcome,attempts
-		}
-	}
-		outcome="Проигрыш"
-		color.Red(outcome)
-		fmt.Printf("Попыток %d\n",attempts)
-		saveResult(outcome,attempts)
-		return outcome,attempts
-	}
+	func getUserInput() int {
+    reader := bufio.NewReader(os.Stdin)
+    for {
+        input, _ := reader.ReadString('\n')
+        input = strings.TrimSpace(input)
+        value, err := strconv.Atoi(input)
+        if err == nil {
+            return value
+        }
+        fmt.Println("Введите корректное число")
+    }
+}
+	func compareAndHint(secret, guess int) bool {
+    if guess > secret {
+        hints(secret, guess)
+        color.Yellow("Секретное число меньше")
+        return false
+    } else if guess < secret {
+        hints(secret, guess)
+        color.Yellow("Секретное число больше")
+        return false
+    } else {
+        return true 
+    }
+}
+	func guessGame(secretNumber int, maxAttempts int) (string, int) {
+    var allAttempts []int
+    var attempts int
+
+    for i := 0; i < maxAttempts; i++ {
+        color.Yellow("\nПопытка %d из %d", i+1, maxAttempts)
+        fmt.Println("Введите число:")
+
+        userGuess := getUserInput()           
+        allAttempts = pastAttempts(allAttempts, userGuess) 
+        attempts++
+
+        if compareAndHint(secretNumber, userGuess) { 
+            outcome := "Победа"
+            color.Green(outcome)
+            fmt.Printf("Попыток: %d\n", attempts)
+            saveResult(outcome, attempts)
+            return outcome, attempts
+        }
+    }
+
+   
+    outcome := "Проигрыш"
+    color.Red(outcome)
+    fmt.Printf("Попыток: %d\n", attempts)
+    saveResult(outcome, attempts)
+    return outcome, attempts
+}
 
 func main(){
 	replay:=true

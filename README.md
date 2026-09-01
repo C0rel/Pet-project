@@ -7,7 +7,7 @@
 ## Запуск
 
 ### Требования
-- Go 1.18 или выше
+- Go 1.25.3 или выше
 
 ### Локальный запуск
 
@@ -16,7 +16,7 @@
 git clone https://github.com/C0rel/Pet-project.git
 
 # Перейти в папку проекта
-cd guees_the_number
+cd Pet-project
 
 # Установить зависимости
 go mod tidy
